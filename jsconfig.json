@@ -3,7 +3,8 @@
     "baseUrl": ".",
     "paths": {
       "@assets/*": ["src/assets/*"],
-      "@components/*": ["src/components/*"]
+      "@components/*": ["src/components/*"],
+      "@helpers/*": ["src/helpers/*"]
     }
   },
   "include": ["src/**/*", "jsconfig.json"]
