@@ -4,6 +4,7 @@ import withReactContent from 'sweetalert2-react-content';
 import iconArrow from '@assets/icon-arrow.svg';
 import imgLoading from '@assets/loading.png';
 import DisplayData from '@components/DisplayData';
+import Maps from '@components/Maps';
 import callApiGeoIpify from '@helpers/call-api-geo-ipify';
 import validateInput from '@helpers/validate-input';
 
@@ -14,6 +15,7 @@ function App() {
   const [location, setLocation] = useState('');
   const [timezone, setTimezone] = useState('');
   const [isp, setIsp] = useState('');
+  const [mapPosition, setMapPosition] = useState({ lat: 0, lng: 0 });
 
   const showSwal = (message) => {
     withReactContent(Swal).fire({ icon: 'error', title: 'Oops...', text: message });
@@ -29,11 +31,12 @@ function App() {
     const response = await callApiGeoIpify(params);
     const { status, data } = response;
     if (status) {
-      const { city, region, postalCode, timezone } = data.location;
+      const { city, region, postalCode, timezone, lat, lng } = data.location;
       setIpAddress(data.ip);
       setLocation(city + ', ' + region + ' ' + postalCode);
       setTimezone('UTC ' + timezone);
       setIsp(data.isp);
+      setMapPosition({ lat, lng });
     } else {
       showSwal(data.messages);
     }
@@ -74,11 +77,11 @@ function App() {
                   setInputValue(event.target.value.toLowerCase());
                 }}
               />
-              <button type="submit" className="hover:bg-very-dark-gray rounded-e-xl bg-black px-5 text-white transition-all duration-200">
+              <button type="submit" className="rounded-e-xl bg-black px-5 text-white transition-all duration-200 hover:bg-very-dark-gray">
                 <img src={iconArrow} alt="arrow" />
               </button>
             </form>
-            <div className="relative flex w-full flex-col items-center justify-center space-y-4 rounded-xl bg-white p-5 text-center md:w-4/5 md:max-w-[1440px] md:flex-row md:items-stretch md:space-x-5 md:space-y-0 md:p-7 md:text-start">
+            <div className="relative z-10 flex w-full flex-col items-center justify-center space-y-4 rounded-xl bg-white p-5 text-center md:w-4/5 md:max-w-[1440px] md:flex-row md:items-stretch md:space-x-5 md:space-y-0 md:p-7 md:text-start">
               <DisplayData label="IP ADDRESS" data={ipAddress} />
               <DisplayData label="LOCATION" data={location} />
               <DisplayData label="TIMEZONE" data={timezone} />
@@ -92,7 +95,7 @@ function App() {
           </div>
         </div>
       </div>
-      <div className="h-80 bg-orange-400">map</div>
+      <Maps position={mapPosition} />
     </div>
   );
 }
